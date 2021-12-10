@@ -54,6 +54,9 @@ public:
     void DeleteFromEnd();
     void DeleteFromIndex(int index);
     void UpdateValue(int index, int val);
+    void Reverse();
+    void removeDuplicates();
+    void splitLL(ListNode &a, ListNode &b);
 };
 
 // Exception classes
@@ -254,6 +257,103 @@ void ListNode::UpdateValue(int index, int val)
     p->val = val;
 }
 
+//Function to Reverse Doubly Linked List
+void ListNode::Reverse()
+{
+    if (!first)
+    {
+        // exception if no node is in the memory
+        NothingInMemory_Exception ex;
+        throw ex;
+    }
+    Node *temp = NULL;
+    Node *current = first;
+
+    /* swap next and prev for all nodes of
+    doubly linked list */
+    while (current != NULL)
+    {
+        temp = current->prev;
+        current->prev = current->next;
+        current->next = temp;
+        current = current->prev;
+    }
+
+    /* Before changing the head, check for the cases like empty
+        list and list with only one node */
+    if (temp != NULL)
+        first = temp->prev;
+}
+
+//Function to Remove Duplicates
+void ListNode::removeDuplicates()
+{
+    // if DLL is empty or if it contains only
+    // a single node
+    if ((first) == NULL ||
+        (first)->next == NULL)
+        return;
+
+    Node *ptr1, *ptr2;
+    int n, n1 = 0;
+
+    // pick elements one by one
+    for (ptr1 = first; ptr1 != NULL; ptr1 = ptr1->next)
+    {
+        ptr2 = ptr1->next;
+        n = n1 + 1;
+        // Compare the picked element with the
+        // rest of the elements
+        while (ptr2 != NULL)
+        {
+            // if duplicate, then delete it
+            if (ptr1->val == ptr2->val)
+            {
+
+                // store pointer to the node next to 'ptr2'
+                Node *next = ptr2->next;
+
+                // delete node pointed to by 'ptr2'
+                DeleteFromIndex(n);
+
+                // update 'ptr2'
+                ptr2 = next;
+            }
+
+            // else simply move to the next node
+            else
+                ptr2 = ptr2->next;
+            n++;
+        }
+        n1++;
+    }
+}
+
+void ListNode::splitLL(ListNode &a, ListNode &b)
+{
+    if (!first)
+    {
+        // exception if no node is in the memory
+        NothingInMemory_Exception ex;
+        throw ex;
+    }
+    int n = Length();
+    a.first = this->first;
+    if (n == 1)
+        return;
+
+    Node *p = first;
+    for (int i = 0; i < n / 2; i++)
+        p = p->next;
+    b.first = p;
+    p->prev->next = NULL;
+    p->prev = NULL;
+    cout << "First LL: ";
+    a.Display();
+    cout << "Second LL: ";
+    b.Display();
+}
+
 int main()
 {
     ListNode LL;
@@ -268,12 +368,15 @@ int main()
              << "6. Delete from end" << endl
              << "7. Delete from index" << endl
              << "8. Update value" << endl
-             << "9. Exit" << endl
+             << "9. Reverse" << endl
+             << "10. Remove Duplicates" << endl
+             << "11. Split the linked list" << endl
+             << "12. Exit" << endl
              << endl;
         int menu;
         cout << "Select option: ";
         cin >> menu;
-        system("CLS");
+        //system("CLS");
         switch (menu)
         {
         case 1:
@@ -387,6 +490,43 @@ int main()
         }
         case 9:
         {
+            try
+            {
+                LL.Reverse();
+            }
+            catch (exception &e)
+            {
+                cerr << e.what() << endl;
+            }
+            break;
+        }
+        case 10:
+        {
+            try
+            {
+                LL.removeDuplicates();
+            }
+            catch (exception &e)
+            {
+                cerr << e.what() << endl;
+            }
+            break;
+        }
+        case 11:
+        {
+            ListNode a, b;
+            try
+            {
+                LL.splitLL(a, b);
+            }
+            catch (exception &e)
+            {
+                cerr << e.what() << endl;
+            }
+            break;
+        }
+        case 12:
+        {
             return 0;
         }
         default:
@@ -394,6 +534,8 @@ int main()
             cout << "Wrong menu!" << endl;
         }
         }
+        cout << endl
+             << endl;
     }
 
     return 0;
